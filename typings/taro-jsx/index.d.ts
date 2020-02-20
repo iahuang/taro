@@ -93,8 +93,6 @@ declare namespace React {
         ref?: Ref<T>;
     }
 
-    type ClassicElement<P> = CElement<P, ClassicComponent<P, ComponentState>>;
-
     // string fallback for custom web-components
     interface DOMElement<P extends HTMLAttributes<T> | SVGAttributes<T>, T extends Element> extends ReactElement<P> {
         type: string;
@@ -146,7 +144,6 @@ declare namespace React {
         (props?: ClassAttributes<T> & P, ...children: ReactNode[]) => CElement<P, T>;
 
     type CFactory<P, T extends Component<P, ComponentState>> = ComponentFactory<P, T>;
-    type ClassicFactory<P> = CFactory<P, ClassicComponent<P, ComponentState>>;
 
     type DOMFactory<P extends DOMAttributes<T>, T extends Element> =
         (props?: ClassAttributes<T> & P | null, ...children: ReactNode[]) => DOMElement<P, T>;
@@ -178,7 +175,6 @@ declare namespace React {
     // Top Level API
     // ----------------------------------------------------------------------
 
-    function createClass<P, S>(spec: ComponentSpec<P, S>): ClassicComponentClass<P>;
 
     // DOM Elements
     function createFactory<T extends HTMLElement>(
@@ -190,8 +186,7 @@ declare namespace React {
 
     // Custom components
     function createFactory<P>(type: SFC<P>): SFCFactory<P>;
-    function createFactory<P>(
-        type: ClassType<P, ClassicComponent<P, ComponentState>, ClassicComponentClass<P>>): CFactory<P, ClassicComponent<P, ComponentState>>;
+
     function createFactory<P, T extends Component<P, ComponentState>, C extends ComponentClass<P>>(
         type: ClassType<P, T, C>): CFactory<P, T>;
     function createFactory<P>(type: ComponentClass<P>): Factory<P>;
@@ -221,10 +216,7 @@ declare namespace React {
         type: SFC<P>,
         props?: Attributes & P,
         ...children: ReactNode[]): SFCElement<P>;
-    function createElement<P>(
-        type: ClassType<P, ClassicComponent<P, ComponentState>, ClassicComponentClass<P>>,
-        props?: ClassAttributes<ClassicComponent<P, ComponentState>> & P,
-        ...children: ReactNode[]): CElement<P, ClassicComponent<P, ComponentState>>;
+
     function createElement<P, T extends Component<P, ComponentState>, C extends ComponentClass<P>>(
         type: ClassType<P, T, C>,
         props?: ClassAttributes<T> & P,
@@ -286,39 +278,10 @@ declare namespace React {
     // Base component for plain JS classes
     // tslint:disable-next-line:no-empty-interface
     interface Component<P = {}, S = {}> extends ComponentLifecycle<P, S> { }
-    class Component<P, S> {
-        constructor(props?: P, context?: any);
-
-        // We MUST keep setState() as a unified signature because it allows proper checking of the method return type.
-        // See: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18365#issuecomment-351013257
-        // Also, the ` | S` allows intellisense to not be dumbisense
-        setState<K extends keyof S>(
-            state: ((prevState: Readonly<S>, props: P) => (Pick<S, K> | S)) | (Pick<S, K> | S),
-            callback?: () => any
-        ): void;
-
-        forceUpdate(callBack?: () => any): void;
-        render(): JSX.Element | null | false;
-
-        // React.Props<T> is now deprecated, which means that the `children`
-        // property is not available on `P` by default, even though you can
-        // always pass children as variadic arguments to `createElement`.
-        // In the future, if we can define its call signature conditionally
-        // on the existence of `children` in `P`, then we should remove this.
-        props: Readonly<{ children?: ReactNode }> & Readonly<P>;
-        state: Readonly<S>;
-        context: any;
-        refs: {
-            [key: string]: ReactInstance
-        };
-    }
-
-    class PureComponent<P = {}, S = {}> extends Component<P, S> { }
-
-    interface ClassicComponent<P = {}, S = {}> extends Component<P, S> {
-        replaceState(nextState: S, callback?: () => any): void;
-        isMounted(): boolean;
-        getInitialState?(): S;
+    abstract class Component<P, S> {
+        props: { [name: string]: any };
+        constructor(props: { [name: string]: any });
+        abstract render(): Element | JSX.Element;
     }
 
     interface ChildContextProvider<CC> {
@@ -346,12 +309,6 @@ declare namespace React {
         defaultProps?: Partial<P>;
         displayName?: string;
     }
-
-    interface ClassicComponentClass<P = {}> extends ComponentClass<P> {
-        new (props?: P, context?: any): ClassicComponent<P, ComponentState>;
-        getDefaultProps?(): P;
-    }
-
     /**
      * We use an intersection type to infer multiple type parameters from
      * a single argument, which is useful for many top-level API defs.
@@ -3627,9 +3584,7 @@ declare global {
     namespace JSX {
         // tslint:disable-next-line:no-empty-interface
         interface Element extends React.ReactElement { }
-        interface ElementClass extends React.Component<any> {
-            render(): JSX.Element | null | false;
-        }
+
         interface ElementAttributesProperty { props: {}; }
         interface ElementChildrenAttribute { children: {}; }
 

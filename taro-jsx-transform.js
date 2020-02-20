@@ -16,8 +16,12 @@ function _default() {
                 let attrs = opening.attributes;
                 let elementTypeName = opening.name.name;
                 let children = path.node.children;
+                if (elementTypeName.charAt(0) == elementTypeName.charAt(0).toUpperCase()) {
+                    path.replaceWithSourceString(`Taro.createComponent(${elementTypeName})`);
+                } else {
+                    path.replaceWithSourceString(`Taro.create("${elementTypeName}")`);
+                }
                 
-                path.replaceWithSourceString(`Taro.create("${elementTypeName}")`);
                 let attrsNode = types.objectExpression([]);
                 for (let attr of attrs) {
                     let attrName = attr.name.name;

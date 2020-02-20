@@ -1,4 +1,5 @@
 import { StateValue, StateArray } from "./state";
+import Component from "./component";
 
 export default class Taro {
     static bindValue(formElement: HTMLElement, to: StateValue<any>) {
@@ -21,7 +22,7 @@ export default class Taro {
 
     static create(
         tagName: string,
-        attrs: { [key: string]: any },
+        attrs: { [name: string]: any },
         ...content: any[]
     ) {
         let el = document.createElement(tagName);
@@ -44,6 +45,18 @@ export default class Taro {
             let childNode = this.valueToNode(child);
             el.appendChild(childNode);
         }
+        return el;
+    }
+
+    static createComponent(
+        compType: typeof Component,
+        props: { [name: string]: any },
+        ...content: any[]
+    ) {
+        let component = new compType(props);
+
+        let el = component.render();
+        console.log(el)
         return el;
     }
 
