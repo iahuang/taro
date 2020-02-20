@@ -15,7 +15,6 @@ export class StateValue<T> {
     }
 
     renderAsNode() {
-        console.log("rendering", this);
         let newNode: Node;
         let valuePrimitiveType = typeof this.value;
         if (valuePrimitiveType != "object") {

@@ -10,7 +10,8 @@ function application() {
             {names.map(name => <p>name: {name}</p> )}
             <input placeholder="name" bindValue={newName}></input>
             <button onClick={()=>{
-                names.push('Bob')
+                names.push(newName.read())
+                newName.set('');
             }}>Add</button>
             <button onClick={()=>{
                 names.set([]);

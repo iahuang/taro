@@ -1,6 +1,24 @@
 import { StateValue, StateArray } from "./state";
 
 export default class Taro {
+    static bindValue(formElement: HTMLElement, to: StateValue<any>) {
+        switch (formElement.tagName.toLocaleLowerCase()) {
+            case "textarea":
+            case "input":
+                formElement.addEventListener("input", event => {
+                    to.set((event.target as HTMLInputElement).value);
+                });
+                to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
+                break;
+            case "select":
+                formElement.addEventListener("change", event => {
+                    to.set((event.target as HTMLInputElement).value);
+                });
+                to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
+                break; 
+        }
+    }
+
     static create(
         tagName: string,
         attrs: { [key: string]: any },
@@ -8,12 +26,17 @@ export default class Taro {
     ) {
         let el = document.createElement(tagName);
         for (let [attr, e] of Object.entries(attrs)) {
-            if (["onClick"].includes(attr)) {
-                el.onclick = () => {
-                    e();
-                };
-            } else {
-                el.setAttribute(attr, e);
+            switch (attr) {
+                case "onClick":
+                    el.onclick = () => {
+                        e();
+                    };
+                    break;
+                case "bindValue":
+                    Taro.bindValue(el, e);
+                    break;
+                default:
+                    el.setAttribute(attr, e);
             }
         }
 
@@ -33,7 +56,7 @@ export default class Taro {
             return document.createTextNode(value);
         }
         if (value instanceof StateValue) {
-            let tmp = document.createDocumentFragment()
+            let tmp = document.createDocumentFragment();
             value.createDependentNodes(tmp);
             value._applyToDOM();
             return tmp;
@@ -42,7 +65,7 @@ export default class Taro {
             return value;
         }
         if (value instanceof Array) {
-            let tmp = document.createDocumentFragment()
+            let tmp = document.createDocumentFragment();
             for (let subChild of value) {
                 tmp.appendChild(subChild);
             }
