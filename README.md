@@ -1,3 +1,10 @@
+![logo](https://github.com/iahuang/taro/raw/master/readme_assets/taro.png)
+
+A web framework inspired by Svelte and ReactJS
+
+## Examples
+
+```js
 import Taro from "./taro/core";
 import { StateNumeric, } from "./taro/state";
 import { add, stateExpr } from "./taro/reactive";
@@ -31,3 +38,4 @@ function application() {
 }
 
 Taro.setBody(application());
+```
