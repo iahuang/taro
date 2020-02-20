@@ -1,33 +1,36 @@
 import Taro from "./taro/core";
-import { StateArray, StateValue } from "./taro/state";
-import Component, { Props } from "./taro/component";
+import { StateArray, StateValue, StateDict } from "./taro/state";
 
-let names = new StateArray<string>();
+let people = new StateDict<string, number>();
 let newName = new StateValue('');
+let newAge = new StateValue<number | null>(null);
 
-class Name extends Component {
-    name: string
-    constructor (props: Props) {
-        super(props);
-        this.name = this.props.name;
-    }
-    render() {
-        return <p>{this.name}</p>
-    }
+function makePersonList() {
+    let entries = people.entries();
+    return entries.map(_entry=>{
+        let entry = _entry.read()
+        return <p>name: {entry[0]} age: {entry[1]}</p>
+    })
 }
 
 function application() {
     return (
         <div>
-            {names.map(name => <Name name={name} /> )}
+            {makePersonList()}
+
             <input placeholder="name" bindValue={newName}></input>
+            <input placeholder="age" bindValue={newAge}></input>
+            
             <button onClick={()=>{
-                names.push(newName.read())
+                people.enter(newName.read(), newAge.read() as number)
                 newName.set('');
             }}>Add</button>
+
             <button onClick={()=>{
-                names.set([]);
+                people.clear();
             }}>Clear</button>
+
+            
         </div>
     );
 }

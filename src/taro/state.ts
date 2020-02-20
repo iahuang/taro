@@ -158,3 +158,53 @@ export class StateArrayDerivative<T> extends StateArray<any> {
         this.set(this.derivation(arr));
     }
 }
+
+export class StateDict<K, V> extends StateValue<Map<K,V>> {
+    arrayMarkerNodes: Node[] = [];
+    arrayContentNodes: Node[] = [];
+
+    constructor(initial: Map<K, V> = new Map<K, V>()) {
+        super(initial);
+    }
+
+    _applyToDOM() {
+        throw new Error("Cannot display StateDict instance in DOM");
+    }
+
+    set(to: Map<K,V>) {
+        this.value = to;
+        this.notifySubscribers();
+    }
+
+    enter(k: K, v: V) {
+        this.value.set(k, v);
+        this.notifySubscribers();
+    }
+
+    get(k: K) {
+        return this.value.get(k);
+    }
+
+    clear() {
+        this.set(new Map<K,V>());
+    }
+
+    entries() {
+        return new StateDictEntries<K,V>(this);
+    }
+}
+
+export class StateDictEntries<K,V> extends StateArray<StateArray<any>> {
+    // pretty similar to Reactive
+    constructor(source: StateDict<K,V>) {
+        super([]);
+        source.subscribe(this.refresh.bind(this));
+    }
+    refresh(map: Map<K,V>) {
+        let entries = new Array<StateArray<any>>();
+        for (let [k, v] of map.entries()) {
+            entries.push(new StateArray([k,v]));
+        }
+        this.set(entries);
+    }
+}

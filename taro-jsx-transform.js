@@ -41,7 +41,7 @@ function _default() {
                 
             },
             JSXText: function(path) {
-                path.replaceWith(types.stringLiteral(path.node.value.trimLeft()));
+                path.replaceWith(types.stringLiteral(path.node.value));
             },
             JSXExpressionContainer: function(path) {
                 path.replaceWith(path.node.expression)

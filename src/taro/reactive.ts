@@ -34,6 +34,10 @@ export function stateExpr(stateArgs: StateValue<any>[], expr: (...values: any)=>
     return new Reactive(expr, ...stateArgs);
 }
 
+export function singleStateExpr<T>(state: StateValue<T>, expr: (state: T)=>any) {
+    return new Reactive(expr, state);
+}
+
 export function add(a: operand, b: operand) {
     [a,b] = [constTypeCoerce(a), constTypeCoerce(b)];
     return new Reactive((a: any, b: any)=>a+b, a, b);
