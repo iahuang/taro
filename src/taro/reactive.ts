@@ -7,7 +7,7 @@ export class Reactive extends StateValue<any> {
         super(null);
         this.dependencies = dependencies;
         for (let dep of dependencies) {
-            dep.reactiveDependents.push(this);
+            dep.subscribe(this.refresh.bind(this))
         }
         this.reaction = reaction;
         this.refresh();
@@ -72,8 +72,4 @@ export function gt(a: operand, b: operand) {
 export function ternary(condition: StateValue<boolean>, a: any, b: any) {
     [a,b] = [constTypeCoerce(a), constTypeCoerce(b)];
     return new Reactive((cd: any, a: any, b: any)=>(cd ? a : b), condition, a, b);
-}
-
-export function map(arr: StateArray<unknown>, cb: (n: unknown)=>unknown) {
-    return new Reactive(arr=>arr.map(cb), arr);
 }

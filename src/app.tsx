@@ -1,13 +1,13 @@
 import Taro from "./taro/core";
 import { StateNumeric, StateValue, StateArray } from "./taro/state";
-import { add, ternary, gt, stateExpr, map } from "./taro/reactive";
+import { add, ternary, gt, stateExpr } from "./taro/reactive";
 
 let names = new StateArray<string>();
 
 function application() {
     return (
         <div>
-            {names}
+            {names.map(name=><p>name: {name}</p>)}
             <button onClick={()=>{
                 names.push('lmao')
             }}>Add one</button>

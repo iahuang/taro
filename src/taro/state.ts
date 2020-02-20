@@ -4,13 +4,18 @@ import Taro from "./core";
 export class StateValue<T> {
     protected value: T;
     dependentNodes: Node[] = [];
-    reactiveDependents: Reactive[] = [];
+    protected subscribers: ((value: T) => void)[] = [];
+
     constructor(initial: T) {
-        this.value = initial; // redundant; only to appease the compiler
+        this.value = initial;
+    }
+
+    subscribe(cb: (value: T) => void) {
+        this.subscribers.push(cb);
     }
 
     renderAsNode() {
-        console.log('rendering',this);
+        console.log("rendering", this);
         let newNode: Node;
         let valuePrimitiveType = typeof this.value;
         if (valuePrimitiveType != "object") {
@@ -24,7 +29,6 @@ export class StateValue<T> {
             } else if (this.value instanceof Node) {
                 newNode = this.value;
             } else {
-                console.log(this.value);
                 throw new Error("Unable to render value " + this.value);
             }
         }
@@ -40,15 +44,18 @@ export class StateValue<T> {
         }
 
         this.dependentNodes = newDependentNodes;
+    }
 
-        for (let dep of this.reactiveDependents) {
-            dep.refresh();
+    protected notifySubscribers() {
+        for (let cb of this.subscribers) {
+            cb(this.value);
         }
     }
 
     set(to: T) {
         this.value = to;
         this._applyToDOM();
+        this.notifySubscribers();
     }
 
     createDependentNodes(at: Node) {
@@ -112,7 +119,7 @@ export class StateArray<T> extends StateValue<T[]> {
             let fragment = document.createDocumentFragment();
             for (let item of this.value) {
                 let newElement = Taro.valueToNode(item);
-                
+
                 fragment.appendChild(newElement);
             }
             for (let child of Array.from(fragment.childNodes)) {
@@ -131,6 +138,24 @@ export class StateArray<T> extends StateValue<T[]> {
     push(item: T) {
         this.update(arr => arr.concat(item));
     }
+
+    map(func: (item: T) => unknown) {
+        return new StateArrayDerivative<T>(this, arr => arr.map(func));
+    }
+    filter(func: (item: T) => unknown) {
+        return new StateArrayDerivative<T>(this, arr => arr.filter(func));
+    }
 }
 
-// export class DerivedStateArray
+export class StateArrayDerivative<T> extends StateArray<any> {
+    // pretty similar to Reactive
+    derivation: (arr: T[]) => unknown[];
+    constructor(source: StateArray<T>, derivation: (arr: T[]) => unknown[]) {
+        super([]);
+        this.derivation = derivation;
+        source.subscribe(this.refresh.bind(this));
+    }
+    refresh(arr: T[]) {
+        this.set(this.derivation(arr));
+    }
+}
