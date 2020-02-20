@@ -1,22 +1,20 @@
 import Taro from "./taro/core";
-import { StateNumeric, StateValue, StateArray } from "./taro/state";
-import { add, ternary, gt, stateExpr } from "./taro/reactive";
+import { StateArray, StateValue } from "./taro/state";
 
 let names = new StateArray<string>();
+let newName = new StateValue('');
 
 function application() {
     return (
         <div>
-            {names.map(name=><p>name: {name}</p>)}
+            {names.map(name => <p>name: {name}</p> )}
+            <input placeholder="name" bindValue={newName}></input>
             <button onClick={()=>{
-                names.push('lmao')
-            }}>Add one</button>
-            <button onClick={()=>{
-                names.push('lmao')
-            }}>Add one</button>
+                names.push('Bob')
+            }}>Add</button>
             <button onClick={()=>{
                 names.set([]);
-            }}>clear</button>
+            }}>Clear</button>
         </div>
     );
 }

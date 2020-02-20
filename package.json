@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@babel/plugin-transform-modules-systemjs": "^7.8.3",
-    "@types/react": "^16.9.20",
     "babel-loader": "^8.0.6",
     "webpack-shell-plugin-next": "^1.1.5"
   }

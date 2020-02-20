@@ -2,12 +2,19 @@
     "compilerOptions": {
         "module": "es6",
         "target": "es6",
-        "lib": ["es2016","dom"],
+        "lib": [
+            "es2016",
+            "dom"
+        ],
         "strict": true,
         "sourceMap": true,
         "jsx": "preserve",
         "outDir": "./dist",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "typeRoots": [
+            "./node_modules/@types",
+            "./typings"
+        ]
     },
     "include": [
         "src/**/*.tsx",
