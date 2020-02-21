@@ -39,3 +39,8 @@ function application() {
 
 Taro.setBody(application());
 ```
+
+# Comparison with React
+
+![logo](https://github.com/iahuang/taro/raw/master/readme_assets/compare.png)
+![result](https://github.com/iahuang/taro/raw/master/readme_assets/compare_result.png)

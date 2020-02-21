@@ -1,6 +1,5 @@
 import Taro from "./taro/core";
-import { StateArray, StateValue, StateDict, StateNumeric } from "./taro/state";
-import { stateExpr, singleStateExpr } from "./taro/reactive";
+import { StateValue, StateDict, StateNumeric } from "./taro/state";
 
 let people = new StateDict<string, number>();
 let newName = new StateValue('');
@@ -22,7 +21,7 @@ function application() {
             <input
                 placeholder="age"
                 bindValue={newAge}
-                inputValueTransform={(value:string)=>Number.parseInt(value)}
+                inputValueTransform={(value: string)=>Number.parseInt(value)}
                 updateOnConfirm
             ></input>
             
@@ -37,8 +36,8 @@ function application() {
             }}>Clear</button>
 
             <button onClick={()=>{
-                for (let person of people.entries()) {
-                    person[1].incr();
+                for (let [name, age] of people.entries()) {
+                    age.incr();
                 }
             }}>Age everyone</button>
         </div>
