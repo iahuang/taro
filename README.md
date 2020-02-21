@@ -2,7 +2,7 @@
 
 A web framework inspired by Svelte and ReactJS
 
-## Examples
+# Examples
 
 ```js
 import Taro from "./taro/core";
