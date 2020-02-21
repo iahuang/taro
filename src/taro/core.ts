@@ -16,7 +16,9 @@ export default class Taro {
                     to.set((event.target as HTMLInputElement).value);
                 });
                 to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
-                break; 
+                break;
+            default:
+                throw new Error("Cannot use bindValue on HTML tag "+formElement.tagName.toLocaleLowerCase());
         }
     }
 
