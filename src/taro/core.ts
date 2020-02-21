@@ -2,7 +2,14 @@ import { StateValue, StateArray } from "./state";
 import Component from "./component";
 
 export default class Taro {
-    static bindValue(formElement: HTMLElement, to: StateValue<any>, valueTransform: ((value: string)=>any) | null) {
+    static bindValue(
+        formElement: HTMLElement, // input element to bind state value to
+        to: StateValue<any>, // state value
+        valueTransform: ((value: string) => any) | null, // optional function to transform
+        // html input value before passing to the state value
+        // useful for input validation
+        updateOnConfirm: boolean // for text fields only: whether to apply to state onchange or oninput
+    ) {
         let eventListenerCallback = (event: Event) => {
             let inputValue = (event.target as HTMLInputElement).value;
             if (valueTransform) {
@@ -10,20 +17,30 @@ export default class Taro {
             } else {
                 to.set(inputValue);
             }
-        }
+        };
 
         switch (formElement.tagName.toLocaleLowerCase()) {
             case "textarea":
             case "input":
-                formElement.addEventListener("input", eventListenerCallback);
-                to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
+                
+                formElement.addEventListener(updateOnConfirm ? "change" : "input", eventListenerCallback);
+                to.subscribe(
+                    boundValue =>
+                        ((formElement as HTMLInputElement).value = boundValue)
+                );
                 break;
             case "select":
                 formElement.addEventListener("change", eventListenerCallback);
-                to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
+                to.subscribe(
+                    boundValue =>
+                        ((formElement as HTMLInputElement).value = boundValue)
+                );
                 break;
             default:
-                throw new Error("Cannot use bindValue on HTML tag "+formElement.tagName.toLocaleLowerCase());
+                throw new Error(
+                    "Cannot use bindValue on HTML tag " +
+                        formElement.tagName.toLocaleLowerCase()
+                );
         }
     }
 
@@ -33,12 +50,18 @@ export default class Taro {
         ...content: any[]
     ) {
         let el = document.createElement(tagName);
-        let transformer: ((value: string)=>any) | null = null;
 
-        for (let [attr, e] of Object.entries(attrs)) { // look for modifiers
+        let transformer: ((value: string) => any) | null = null;
+        let updateOnConfirm = false;
+
+        for (let [attr, e] of Object.entries(attrs)) {
+            // look for modifiers
             switch (attr) {
                 case "inputValueTransform":
                     transformer = e;
+                    break;
+                case "updateOnConfirm":
+                    updateOnConfirm = e;
                     break;
             }
         }
@@ -51,7 +74,7 @@ export default class Taro {
                     };
                     break;
                 case "bindValue":
-                    Taro.bindValue(el, e, transformer);
+                    Taro.bindValue(el, e, transformer, updateOnConfirm);
                     break;
                 default:
                     el.setAttribute(attr, e);
@@ -73,7 +96,7 @@ export default class Taro {
         let component = new compType(props);
 
         let el = component.render();
-        console.log(el)
+        console.log(el);
         return el;
     }
 

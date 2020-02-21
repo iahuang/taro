@@ -12,6 +12,7 @@ export class StateValue<T> {
 
     subscribe(cb: (value: T) => void) {
         this.subscribers.push(cb);
+        cb(this.value);
     }
 
     renderAsNode() {
@@ -97,6 +98,9 @@ export class StateNumeric extends StateValue<number> {
     decr(by: any = 1) {
         this.update(v => v - by);
     }
+    set(to: any) {
+        super.set(Number.parseInt(to.toString()))
+    }
 }
 function insertAfter(el: Node, referenceNode: Node) {
     referenceNode.parentNode?.insertBefore(el, referenceNode.nextSibling);
@@ -138,11 +142,22 @@ export class StateArray<T> extends StateValue<T[]> {
         this.update(arr => arr.concat(item));
     }
 
+    get(index: number) {
+        return new StateArrayElement<T>(this, index);
+    }
+
     map(func: (item: T) => unknown) {
         return new StateArrayDerivative<T>(this, arr => arr.map(func));
     }
+
     filter(func: (item: T) => unknown) {
         return new StateArrayDerivative<T>(this, arr => arr.filter(func));
+    }
+
+    *[Symbol.iterator]() {
+        for (let item of this.value) {
+            yield item;
+        }
     }
 }
 
@@ -159,7 +174,20 @@ export class StateArrayDerivative<T> extends StateArray<any> {
     }
 }
 
-export class StateDict<K, V> extends StateValue<Map<K,V>> {
+export class StateArrayElement<T> extends StateValue<T | null> {
+    // pretty similar to Reactive
+    index: number;
+    constructor(source: StateArray<T>, index: number) {
+        super(null);
+        source.subscribe(this.refresh.bind(this));
+        this.index = index;
+    }
+    refresh(arr: T[]) {
+        this.set(arr[this.index]);
+    }
+}
+
+export class StateDict<K, V> extends StateValue<Map<K, V>> {
     arrayMarkerNodes: Node[] = [];
     arrayContentNodes: Node[] = [];
 
@@ -171,7 +199,7 @@ export class StateDict<K, V> extends StateValue<Map<K,V>> {
         throw new Error("Cannot display StateDict instance in DOM");
     }
 
-    set(to: Map<K,V>) {
+    set(to: Map<K, V>) {
         this.value = to;
         this.notifySubscribers();
     }
@@ -182,28 +210,49 @@ export class StateDict<K, V> extends StateValue<Map<K,V>> {
     }
 
     get(k: K) {
-        return this.value.get(k);
+        return new StateDictValue<K,V>(this, k);
     }
 
     clear() {
-        this.set(new Map<K,V>());
+        this.set(new Map<K, V>());
     }
 
-    entries() {
-        return new StateDictEntries<K,V>(this);
+    entries(): StateDictEntries<K,V> {
+        return new StateDictEntries(this);
     }
 }
 
-export class StateDictEntries<K,V> extends StateArray<StateArray<any>> {
+export class StateDictValue<K, V> extends StateValue<V | undefined> {
     // pretty similar to Reactive
-    constructor(source: StateDict<K,V>) {
-        super([]);
+    key: K;
+    source: StateDict<K, V>;
+    constructor(source: StateDict<K, V>, key: K) {
+        super(undefined);
+        this.key = key;
+        this.source = source;
         source.subscribe(this.refresh.bind(this));
     }
     refresh(map: Map<K,V>) {
-        let entries = new Array<StateArray<any>>();
+        this.value = map.get(this.key);
+        this.notifySubscribers();
+    }
+    set(to: V) {
+        console.log('interesante');
+        this.source.enter(this.key, to);
+    }
+}
+export class StateDictEntries<K, V> extends StateArray<[K, StateDictValue<K, V>]> {
+    // pretty similar to Reactive
+    source: StateDict<K, V>
+    constructor(source: StateDict<K, V>) {
+        super([]);
+        this.source = source;
+        source.subscribe(this.refresh.bind(this));
+    }
+    refresh(map: Map<K, V>) {
+        let entries: [K, StateDictValue<K, V>][] = [];
         for (let [k, v] of map.entries()) {
-            entries.push(new StateArray([k,v]));
+            entries.push([k, this.source.get(k)]);
         }
         this.set(entries);
     }

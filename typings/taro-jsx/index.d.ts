@@ -2871,6 +2871,7 @@ declare namespace React {
 
         bindValue?: StateValue<any>;
         inputValueTransform?: (value: string)=>any;
+        updateOnConfirm?: boolean;
     }
 
     interface KeygenHTMLAttributes<T> extends HTMLAttributes<T> {

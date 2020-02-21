@@ -26,6 +26,9 @@ function _default() {
                 for (let attr of attrs) {
                     let attrName = attr.name.name;
                     let attrValue = attr.value;
+                    if (attrValue == null) {
+                        attrValue = types.booleanLiteral(true);
+                    }
 
                     if (types.isJSXExpressionContainer(attrValue)) {
                         attrValue = attrValue.expression;
