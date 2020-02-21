@@ -2870,6 +2870,7 @@ declare namespace React {
         onChange?: ChangeEventHandler<T>;
 
         bindValue?: StateValue<any>;
+        inputValueTransform?: (value: string)=>any;
     }
 
     interface KeygenHTMLAttributes<T> extends HTMLAttributes<T> {

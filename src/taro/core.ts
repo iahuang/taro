@@ -2,19 +2,24 @@ import { StateValue, StateArray } from "./state";
 import Component from "./component";
 
 export default class Taro {
-    static bindValue(formElement: HTMLElement, to: StateValue<any>) {
+    static bindValue(formElement: HTMLElement, to: StateValue<any>, valueTransform: ((value: string)=>any) | null) {
+        let eventListenerCallback = (event: Event) => {
+            let inputValue = (event.target as HTMLInputElement).value;
+            if (valueTransform) {
+                to.set(valueTransform(inputValue));
+            } else {
+                to.set(inputValue);
+            }
+        }
+
         switch (formElement.tagName.toLocaleLowerCase()) {
             case "textarea":
             case "input":
-                formElement.addEventListener("input", event => {
-                    to.set((event.target as HTMLInputElement).value);
-                });
+                formElement.addEventListener("input", eventListenerCallback);
                 to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
                 break;
             case "select":
-                formElement.addEventListener("change", event => {
-                    to.set((event.target as HTMLInputElement).value);
-                });
+                formElement.addEventListener("change", eventListenerCallback);
                 to.subscribe(boundValue=>(formElement as HTMLInputElement).value = boundValue);
                 break;
             default:
@@ -28,6 +33,16 @@ export default class Taro {
         ...content: any[]
     ) {
         let el = document.createElement(tagName);
+        let transformer: ((value: string)=>any) | null = null;
+
+        for (let [attr, e] of Object.entries(attrs)) { // look for modifiers
+            switch (attr) {
+                case "inputValueTransform":
+                    transformer = e;
+                    break;
+            }
+        }
+
         for (let [attr, e] of Object.entries(attrs)) {
             switch (attr) {
                 case "onClick":
@@ -36,7 +51,7 @@ export default class Taro {
                     };
                     break;
                 case "bindValue":
-                    Taro.bindValue(el, e);
+                    Taro.bindValue(el, e, transformer);
                     break;
                 default:
                     el.setAttribute(attr, e);
