@@ -4,7 +4,6 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --open --mode development",
         "build": "babel src -d tmp --extensions .ts,.tsx,.js,.jsx --keep-file-extension; tsc --project ./tmp --outDir ./dist; node remove_jsx_extension.js"
     },
     "author": "",
