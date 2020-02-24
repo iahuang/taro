@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "babel src -d tmp --extensions .ts,.tsx,.js,.jsx --keep-file-extension; tsc --project ./tmp --outDir ./dist; node remove_jsx_extension.js"
+        "build": "babel src -d babel_output --extensions .ts,.tsx,.js,.jsx --keep-file-extension; tsc --project ./babel_output"
     },
     "author": "",
     "license": "ISC",

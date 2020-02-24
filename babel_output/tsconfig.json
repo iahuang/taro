@@ -1,18 +1,17 @@
 {
     "compilerOptions": {
-        "target": "es2020",
+        "module": "system",
+        "target": "es2016",
         "lib": [
             "es2017",
             "dom"
         ],
         "strict": true,
+        "sourceMap": true,
         "jsx": "preserve",
         "moduleResolution": "node",
-        "typeRoots": [
-            "./node_modules/@types",
-            "./typings"
-        ],
-        "downlevelIteration": true
+        "downlevelIteration": true,
+        "outFile": "../dist/bundle.js"
     },
     "exclude": [
         "node_modules"

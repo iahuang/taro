@@ -78,7 +78,6 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -134,6 +133,11 @@ Temporary Items
 
 # End of https://www.gitignore.io/api/macos
 
-tmp
+babel_output/**/*.js
+babel_output/**/*.jsx
+babel_output/**/*.ts
+babel_output/**/*.tsx
 
 testing
+dist/bundle.js
+dist/bundle.js.map
