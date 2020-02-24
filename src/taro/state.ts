@@ -1,4 +1,4 @@
-import Taro from "./core";
+import Taro from "./core.js";
 
 export class StateValue<T> {
     protected value: T;

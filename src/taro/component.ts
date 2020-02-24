@@ -5,7 +5,7 @@ export default class Component {
     constructor(props: Props) {
         this.props = props;
     }
-    render(): Element | JSX.Element {
+    render(): Element {
         throw new Error("Cannot instantiate base Component class");
     }
 }

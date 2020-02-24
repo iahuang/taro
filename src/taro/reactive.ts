@@ -1,4 +1,4 @@
-import { StateValue, Const, StateArray } from "./state";
+import { StateValue, Const, StateArray } from "./state.js";
 
 export class Reactive extends StateValue<any> {
     dependencies: StateValue<any>[] = [];

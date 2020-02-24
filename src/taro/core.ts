@@ -1,5 +1,5 @@
-import { StateValue, StateArray } from "./state";
-import Component from "./component";
+import { StateValue, StateArray } from "./state.js";
+import Component from "./component.js";
 
 export default class Taro {
     static bindValue(

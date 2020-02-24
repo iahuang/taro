@@ -1,29 +1,26 @@
 {
-  "name": "taro",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "webpack-dev-server --open --mode development",
-    "build": "webpack --mode production --display verbose"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/plugin-syntax-jsx": "^7.8.3",
-    "@babel/plugin-transform-typescript": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
-  },
-  "dependencies": {
-    "@babel/plugin-transform-modules-systemjs": "^7.8.3",
-    "babel-loader": "^8.0.6",
-    "webpack-shell-plugin-next": "^1.1.5"
-  }
+    "name": "taro",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "webpack-dev-server --open --mode development",
+        "build": "babel src -d tmp --extensions .ts,.tsx,.js,.jsx --keep-file-extension; tsc --project ./tmp --outDir ./dist; node remove_jsx_extension.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/cli": "^7.8.4",
+        "@babel/core": "^7.8.4",
+        "@babel/plugin-syntax-jsx": "^7.8.3",
+        "@babel/plugin-transform-typescript": "^7.8.3",
+        "@babel/preset-env": "^7.8.4",
+        "ts-loader": "^6.2.1",
+        "typescript": "^3.7.5"
+    },
+    "dependencies": {
+        "@babel/plugin-transform-modules-systemjs": "^7.8.3",
+        "babel-loader": "^8.0.6",
+        "glob": "^7.1.6"
+    }
 }

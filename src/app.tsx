@@ -1,5 +1,5 @@
-import Taro from "./taro/core";
-import { StateValue, StateDict, StateNumeric } from "./taro/state";
+import Taro from "./taro/core.js";
+import { StateValue, StateDict, StateNumeric } from "./taro/state.js";
 
 let people = new StateDict<string, number>();
 let newName = new StateValue('');

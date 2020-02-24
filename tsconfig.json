@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "es6",
-        "target": "es6",
+        "target": "ES2016",
         "lib": [
             "es2016",
             "dom"
@@ -14,12 +14,9 @@
         "typeRoots": [
             "./node_modules/@types",
             "./typings"
-        ]
+        ],
+        "downlevelIteration": true
     },
-    "include": [
-        "src/**/*.tsx",
-        "src/**/*.ts"
-    ],
     "exclude": [
         "node_modules"
     ]
