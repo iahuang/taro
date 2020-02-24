@@ -81,3 +81,7 @@ Taro.setBody(application());
 ## Result
 
 ![result](https://github.com/iahuang/taro/raw/master/readme_assets/compare_result.png)
+
+# Getting Started
+
+Taro isn't on npm yet because this project is only a week or so old. For now, just clone this repository, edit `src/app.tsx`, and do `npm run build` when you're ready to test it. Taro currently runs on SystemJS 2.0 so `dist/` needs to be served over a local HTTP server otherwise the page will not load. There are plenty of quick solutions to serving a static directory such as [`npx serve`](https://www.npmjs.com/package/serve)
