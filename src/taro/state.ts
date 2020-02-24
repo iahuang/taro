@@ -1,4 +1,3 @@
-import { Reactive } from "./reactive";
 import Taro from "./core";
 
 export class StateValue<T> {
