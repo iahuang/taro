@@ -1,9 +1,10 @@
 {
-    "name": "taro",
+    "name": "tarojs",
     "version": "2.0.0",
-    "description": "",
+    "description": "A lightweight TSX library built off of React",
     "main": "lib/Taro.js",
     "types": "lib/Taro.d.ts",
+    "keywords": ["react", "html", "js", "typescript"],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "prepare": "npm run build",
