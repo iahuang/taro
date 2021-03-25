@@ -1,4 +1,4 @@
-class Taro {
+export class Taro {
 
 }
 
@@ -9,4 +9,3 @@ class __TaroReact {
 }
 
 (window as any).React = new __TaroReact();
-(window as any).Taro = new Taro();

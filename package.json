@@ -1,15 +1,24 @@
 {
     "name": "tarojs",
-    "version": "2.0.0",
+    "version": "2.0.13",
     "description": "A lightweight TSX library built off of React",
-    "main": "lib/Taro.js",
-    "types": "lib/Taro.d.ts",
-    "keywords": ["react", "html", "js", "typescript"],
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "keywords": [
+        "react",
+        "html",
+        "js",
+        "typescript"
+    ],
+    "files": [
+        "dist/**/*"
+    ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepare": "npm run build",
-        "version": "npm run format && git add -A src",
-        "postversion": "git push && git push --tags",
+        "prepare": "npm run build && cp src/Taro.ts lib/Taro.ts",
+        "format": "",
+        "version": "npm run format",
+        "postversion": "",
         "build": "tsc"
     },
     "repository": {
