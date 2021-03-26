@@ -1,6 +1,6 @@
 {
     "name": "tarojs",
-    "version": "2.0.13",
+    "version": "2.1.1",
     "description": "A lightweight TSX library built off of React",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

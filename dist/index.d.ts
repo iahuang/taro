@@ -1,6 +1,74 @@
-declare module "Taro" {
-    export class Taro {
+declare module "taro/core" {
+    class DOMSubscriptionIndex {
+        _table: Map<Node, TaroBaseMutableState<any>[]>;
+        _gcCounter: number;
+        gcEveryNthOperation: number;
+        registerNodeSubscription(node: Node, stateRoot: TaroBaseMutableState<any>): void;
+        _collectGarbage(): void;
+        updateGC(): void;
     }
+    export default class TaroInternal {
+        static dsi: DOMSubscriptionIndex;
+    }
+    export type TaroStateObservable<T> = TaroStateObject<T> | T;
+    export abstract class TaroStateObject<T> {
+        private _name;
+        setName(name: string): void;
+        get name(): string | null;
+        abstract getValue(): T;
+    }
+    export function observe<T>(n: TaroStateObservable<T>): T;
+    type onChangeCallback<T> = (newValue: T) => void;
+    export class TaroBaseMutableState<T> extends TaroStateObject<T> {
+        value: T;
+        private subscribers;
+        constructor(initialValue: T);
+        getValue(): T;
+        subscribeFromNode(node: Node, cb: onChangeCallback<T>): void;
+        unsubscribeNode(node: Node): void;
+        updateValue(to: T): void;
+    }
+}
+declare module "taro/reactive" {
+    import { TaroBaseMutableState, TaroStateObject, TaroStateObservable } from "taro/core";
+    export type TaroReactiveTransformer<T> = (...dep: TaroStateObservable<any>[]) => T;
+    export class TaroReactiveState<T> extends TaroStateObject<T> {
+        dependencies: TaroStateObservable<any>[];
+        transformer: TaroReactiveTransformer<T>;
+        constructor(dep: TaroStateObservable<any>[], t: TaroReactiveTransformer<T>);
+        getValue(): T;
+    }
+    export class NumericStateVar extends TaroBaseMutableState<number> {
+        constructor(n: number);
+        increment(n: TaroStateObservable<number>): void;
+    }
+}
+declare module "taro/api" {
+    import { TaroStateObservable } from "taro/core";
+    import { NumericStateVar, TaroReactiveState } from "taro/reactive";
+    export class Taro {
+        static render(el: HTMLElement, to: HTMLElement): void;
+        static state: {
+            number: (initial: number) => NumericStateVar;
+        };
+        static add(a: TaroStateObservable<number>, b: TaroStateObservable<number>): TaroReactiveState<number>;
+    }
+}
+declare module "taro/react_dom" {
+    import { TaroStateObject, TaroBaseMutableState } from "taro/core";
+    import { TaroReactiveState } from "taro/reactive";
+    type TaroJSXRepresentable = string | null | undefined | number | Array<TaroJSXRepresentable> | HTMLElement | TaroStateObject<TaroJSXRepresentable>;
+    export class __TaroReact {
+        _createNodeBinding<T>(node: ChildNode, obj: TaroStateObject<T>): void;
+        _garbageCollect(): void;
+        _toDOMNode(obj: TaroJSXRepresentable): ChildNode;
+        getTopLevelDependencies<T>(stateObj: TaroReactiveState<T>): TaroBaseMutableState<any>[];
+        _getTLDep<T>(obj: TaroReactiveState<T>, all: TaroBaseMutableState<any>[]): void;
+        createElement(tagName: string, args: Record<string, any> | null, ...children: TaroJSXRepresentable[]): HTMLElement;
+    }
+}
+declare module "taro" {
+    export { Taro } from "taro/api";
 }
 declare type WeakValidationMap<T> = {};
 declare type ValidationMap<T> = {};
